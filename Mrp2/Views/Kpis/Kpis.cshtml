@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculate COGS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script>
+        function calculateCogs() {
+            const beginningInventoryUnits = parseFloat(document.getElementById('beginningInventoryUnits').value);
+            const beginningInventoryCost = parseFloat(document.getElementById('beginningInventoryCost').value);
+            const purchasedUnits = parseFloat(document.getElementById('purchasedUnits').value);
+            const purchasedCost = parseFloat(document.getElementById('purchasedCost').value);
+            const endingInventoryUnits = parseFloat(document.getElementById('endingInventoryUnits').value);
+            const method = document.querySelector('input[name="method"]:checked').value;
+
+            const beginningInventoryTotalCost = beginningInventoryUnits * beginningInventoryCost;
+            const purchasedTotalCost = purchasedUnits * purchasedCost;
+            const totalCost = beginningInventoryTotalCost + purchasedTotalCost;
+
+            let endingInventoryCost = 0;
+            let calculationEquation = '';
+
+            if (method === 'fifo') {
+                endingInventoryCost = endingInventoryUnits * purchasedCost; // Assuming most recent purchases are used for FIFO
+                calculationEquation = `Total Cost = (Beginning Inventory Units × Cost per Unit) + (Purchased Units × Cost per Unit)
+        Total Cost = (${beginningInventoryUnits} × ${beginningInventoryCost}) + (${purchasedUnits} × ${purchasedCost}) = ${beginningInventoryTotalCost} + ${purchasedTotalCost} = ${totalCost}
+        Ending Inventory Cost = ${endingInventoryUnits} × ${purchasedCost} = ${endingInventoryCost}
+        COGS = Total Cost - Ending Inventory Cost = ${totalCost} - ${endingInventoryCost} = ${totalCost - endingInventoryCost}`;
+            } else if (method === 'lifo') {
+                const endingInventoryFromBeginning = Math.min(beginningInventoryUnits, endingInventoryUnits);
+                const endingInventoryFromPurchases = endingInventoryUnits - endingInventoryFromBeginning;
+                endingInventoryCost = (endingInventoryFromBeginning * beginningInventoryCost) + (endingInventoryFromPurchases * purchasedCost);
+                calculationEquation = `Total Cost = (Beginning Inventory Units × Cost per Unit) + (Purchased Units × Cost per Unit)
+        Total Cost = (${beginningInventoryUnits} × ${beginningInventoryCost}) + (${purchasedUnits} × ${purchasedCost}) = ${beginningInventoryTotalCost} + ${purchasedTotalCost} = ${totalCost}
+        Ending Inventory Cost = (${endingInventoryFromBeginning} × ${beginningInventoryCost}) + (${endingInventoryFromPurchases} × ${purchasedCost}) = ${endingInventoryFromBeginning * beginningInventoryCost} + ${endingInventoryFromPurchases * purchasedCost} = ${endingInventoryCost}
+        COGS = Total Cost - Ending Inventory Cost = ${totalCost} - ${endingInventoryCost} = ${totalCost - endingInventoryCost}`;
+            }
+
+            const cogs = totalCost - endingInventoryCost;
+
+            document.getElementById('result').innerHTML = `<p><strong>COGS: $${cogs.toFixed(2)}</strong></p><pre>${calculationEquation}</pre>`;
+        }
+
+
+        function calculateAverageInventory() {
+            let totalInventory = 0;
+            for (let i = 1; i <= 12; i++) {
+                totalInventory += parseFloat(document.getElementById(`inventoryMonth${i}`).value);
+            }
+            const averageInventory = totalInventory / 12;
+            document.getElementById('averageInventoryResult').innerHTML = `<p><strong>Average Inventory: $${averageInventory.toFixed(2)}</strong></p>`;
+        }
+
+         function calculateGroii() {
+            const salesRevenue = parseFloat(document.getElementById('salesRevenue').value);
+            const cogs = parseFloat(document.getElementById('cogs').value);
+            const beginningInventory = parseFloat(document.getElementById('beginningInventory').value);
+            const endingInventory = parseFloat(document.getElementById('endingInventory').value);
+
+            const grossProfit = salesRevenue - cogs;
+            const averageInventory = (beginningInventory + endingInventory) / 2;
+            const groii = (grossProfit / averageInventory) ;
+
+            document.getElementById('groiiResult').innerHTML = `<p><strong>GROII: ${groii.toFixed(2)}%</strong></p>`;
+
+        }
+            function calculateInventoryTurnover() {
+                const cogs = parseFloat(document.getElementById('cogsInventoryTurnover').value);
+                const averageInventory = parseFloat(document.getElementById('averageInventory').value);
+
+                const inventoryTurnover = cogs / averageInventory;
+                document.getElementById('inventoryTurnoverResult').innerHTML = `<p><strong>Inventory Turnover Ratio: ${inventoryTurnover.toFixed(2)}</strong></p>`;
+            }
+        
+
+
+
+
+    </script>
+</head>
+<body>
+
+    <div class="row " style="margin-top:20px;margin-left:30px">
+        <a class=" btn btn-success m-2 col-2" style="margin-left:45px" href="/home/landingpage">home page</a>
+        <hr />
+        <h3>Calculate Cost of Goods Sold (COGS)</h3>
+        <form>
+            <div class="row">
+
+            <div class="form-group col-3">
+                <label for="beginningInventoryUnits">Beginning Inventory Units:</label>
+                <input type="number" class="form-control col-3" id="beginningInventoryUnits"  required>
+            </div>
+            <div class="form-group col-3">
+                <label for="beginningInventoryCost">Beginning Inventory Cost per Unit:</label>
+                <input type="number" class="form-control" id="beginningInventoryCost"  step="0.01" required>
+            </div>
+            </div>
+            <div class="row">
+
+            <div class="form-group col-3">
+                <label for="purchasedUnits">Purchased Units During the Period:</label>
+                <input type="number" class="form-control" id="purchasedUnits"   required>
+            </div>
+            <div class="form-group col-3">
+                <label for="purchasedCost">Purchased Cost per Unit:</label>
+                <input type="number" class="form-control" id="purchasedCost"  step="0.01" required>
+            </div>
+            </div>
+
+            <div class="form-group col-3">
+                <label for="endingInventoryUnits">Ending Inventory Units:</label>
+                <input type="number" class="form-control" id="endingInventoryUnits"   required>
+            </div>
+            <div class="form-group ">
+                <label>Inventory Valuation Method:</label><br>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="method" id="fifo" value="fifo" checked>
+                    <label class="form-check-label" for="fifo">FIFO</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="method" id="lifo" value="lifo">
+                    <label class="form-check-label" for="lifo">LIFO</label>
+                </div>
+            </div>
+            <br>
+            <button type="button" class="btn btn-primary m-2" onclick="calculateCogs()">Calculate COGS</button>
+        </form>
+        <br>
+        <div id="result" class="alert alert-info col-6" role="alert"></div>
+    <hr></hr>
+
+
+    <h3 class="ms-1">Calculate Average Inventory</h3>
+    <form>
+        <div class="row col-12 ms-1">
+            @for (int i = 1; i <= 12; i++)
+            {
+                <div class="col-1">
+                    <div class="form-group">
+                        <label for="inventoryMonth@(i)">Month @(i):</label>
+                        <input type="number" class="form-control" id="inventoryMonth@(i)" placeholder="0" required>
+                    </div>
+                </div>
+            }
+        </div>
+        <br>
+        <button type="button" class="btn btn-primary m-2" onclick="calculateAverageInventory()">Calculate Average Inventory</button>
+    </form>
+    <br>
+    <div id="averageInventoryResult" class="alert alert-info ms-4 col-2" role="alert"></div>
+    </div>
+    <hr></hr>
+
+    <div class="row">
+        <div style="display: flex;">
+            <div style="flex: 1; margin-right: 10px;">
+                <h3 class="ms-4">Calculate Gross Return on Inventory Investment (GROII)</h3>
+                <form class="ms-4">
+                    <div class="row">
+                    <div class="form-group col-4">
+                        <label for="salesRevenue">Sales Revenue:</label>
+                        <input type="number" class="form-control" id="salesRevenue" required>
+                    </div>
+                    <div class="form-group col-5">
+                        <label for="cogs">Cost of Goods Sold (COGS):</label>
+                        <input type="number" class="form-control" id="cogs" required>
+                    </div>
+                    </div>
+
+                    <div class="row">
+
+                    <div class="form-group col-4">
+                        <label for="beginningInventory">Beginning Inventory:</label>
+                        <input type="number" class="form-control" id="beginningInventory" required>
+                    </div>
+                    <div class="form-group col-3">
+                        <label for="endingInventory">Ending Inventory:</label>
+                        <input type="number" class="form-control" id="endingInventory" required>
+                    </div>
+                    </div>
+                    <br>
+                    <button type="button" class="btn btn-primary" onclick="calculateGroii()">Calculate GROII</button>
+                </form>
+                <br>
+                <div id="groiiResult" class="alert alert-info col-3 ms-3" role="alert"></div>
+            </div>
+
+            <div style="flex: 1; margin-left: 10px;">
+                <h3>Calculate Inventory Turnover Ratio</h3>
+                <form>
+                    <div class="form-group col-3">
+                        <label for="cogsInventoryTurnover">Cost of Goods Sold (COGS):</label>
+                        <input type="number" class="form-control" id="cogsInventoryTurnover" required>
+                    </div>
+                    <div class="form-group col-3">
+                        <label for="averageInventory">Average Inventory:</label>
+                        <input type="number" class="form-control" id="averageInventory" required>
+                    </div>
+                    <br>
+                    <button type="button" class="btn btn-primary" onclick="calculateInventoryTurnover()">Calculate Inventory Turnover Ratio</button>
+                </form>
+                <br>
+                <div id="inventoryTurnoverResult" class="alert alert-info col-3" role="alert"></div>
+            </div>
+        </div>
+    </div>
+
+    <hr></hr>
+
+</body>
+</html>

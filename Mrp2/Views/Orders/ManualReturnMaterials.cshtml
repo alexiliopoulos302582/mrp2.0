@@ -1,0 +1,32 @@
+﻿<form asp-action="ManualReturnMaterials" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="orderId" value="@Model.OrderId" />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Raw Material</th>
+                <th>Bound Quantity</th>
+                <th>Quantity to Return</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.RawMaterials.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Model.RawMaterials[i].Name
+                        <input type="hidden" name="rawMaterials[@i].RawMaterialId" value="@Model.RawMaterials[i].RawMaterialId" />
+                        <input type="hidden" name="rawMaterials[@i].BoundQTY" value="@Model.RawMaterials[i].BoundQTY" />
+                    </td>
+                    <td>@Model.RawMaterials[i].BoundQTY</td>
+                    <td>
+                        <input type="number" name="rawMaterials[@i].QuantityToReturn" class="form-control" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

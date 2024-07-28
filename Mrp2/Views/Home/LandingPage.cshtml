@@ -1,0 +1,159 @@
+﻿@{
+    ViewData["Title"] = "Landing Page";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - My Custom App</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
+
+
+   @*  <link rel="stylesheet" href="~/wwwroot/css/site.css"/>
+    <link rel="stylesheet" href="~/css/site.css" />
+ *@
+      <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Full viewport height */
+        }
+
+        main {
+            flex: 1; /* Allows the main content to grow and push the footer down */
+        }
+         
+        footer {
+            
+            background-color: gray; /* Optional: Light gray background for footer */
+            padding: 0px 0; /* Padding for better appearance */
+            text-align: center; /* Center text */
+            width: 100%; /* Full width */
+            position: relative; /* Ensure it stays at the bottom in normal flow */
+            bottom: 0; /* Align to bottom */
+        }
+
+         
+    </style>
+
+</head>
+
+
+
+<body style="background-color: black; color:lime">
+    <div class="d-flex align-items-center justify-content-center full-height">
+        <h2>Material Resource Planning</h2>
+    </div>
+
+
+    <div class="container" style="margin-top:20px">
+        <div class="row">
+            <div class="col-md-2">
+                <a href="/InboundDelivery/Create" class="btn btn-warning">Inbound Delivery</a>
+            </div>
+            <div class="col-md-1 text-end">
+                <a href="/Identity/Account/Login" class="btn btn-warning">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <br />
+
+    <main class="container" style="margin-top: 50px;">
+        <div class="row">
+            <div class="col-md-4 mb-2">
+                <img src="~/images/raw.png" class="img-fluid" alt="MRR Image" style="height:180px;width:400px; margin-bottom: 20px;">
+                <a href="/RawMaterials/Index" class="btn btn-success w-100">Raw Materials</a>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <img src="~/images/bill.jpg" class="img-fluid" alt="MRR Image" style=" height:180px;width:400px; margin-bottom: 20px;">
+                <a class="btn btn-success w-100" href="/Recipes/index">Recipes</a>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <img src="~/images/order.jpg" class="img-fluid" alt="MRR Image" style="height: 180px;width:400px; margin-bottom: 20px;">
+                <a class="btn btn-success w-100" href="/Orders/index">Orders</a>
+            </div>
+        </div>
+
+        <div class="m-4" style="border:solid lime 3px;">        </div>
+      
+         
+        <div class="row">
+            <div class="col-md-4 mb-2">
+                <a class="btn btn-primary w-100" href="/RawMaterials/create">Add Raw Material</a>
+            </div>
+            <div class="col-md-4 mb-2">
+                <a class="btn btn-primary w-100" href="/Recipes/create">Create Recipe</a>
+            </div>
+            <div class="col-md-4 mb-2">
+                <a class="btn btn-primary w-100" href="/Orders/create">Place Order</a>
+            </div>
+        </div>
+
+
+        <div class="m-4" style="border:solid red 3px;">        </div>
+
+        <div class="row">
+            <div class="col-md-3 mb-1">
+                <a class="btn btn-primary w-100" href="/Units">Units</a>
+            </div>
+            <div class="col-md-3 mb-1">
+                <a class="btn btn-primary w-100" href="/Status">Status</a>
+            </div>
+            <div class="col-md-3 mb-1">
+                <a class="btn btn-primary w-100" href="/Suppliers">Suppliers</a>
+            </div>
+            <div class="col-md-3 mb-1">
+                <a class="btn btn-primary w-100" href="/Categories">Category</a>
+            </div>
+        </div>
+
+
+      
+
+        <div class="m-4" style="border:solid lime 3px;">        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-1">
+                <img src="~/images/inv1.jpg" class="img-fluid" alt="MRR Image"
+                     style="height: 175px;width:400px; margin-bottom: 20px;">
+                <a class="btn btn-primary w-100" href="/Inventory">Inventory Managemnt</a>
+
+            </div>
+            <div class="col-md-4 mb-1">
+                <img src="~/images/reg1.png" class="img-fluid" alt="MRR Image" style="height: 175px;width:400px; margin-bottom: 20px;">
+
+                <a class="btn btn-primary w-100" href="/Regression">Regression Forecast</a>
+            </div>
+            <div class="col-md-4 mb-1">
+                <img src="~/images/kpi2.jpg" class="img-fluid" alt="MRR Image"
+                     style="height: 175px;width:400px; margin-bottom: 20px;">
+
+                <a class="btn btn-primary w-100" href="/Kpis">KPIs</a>
+            </div>
+
+        </div>
+    </main>
+         
+
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+          
+
+    </div>
+     
+</body>
+ 
+</html>

@@ -1,0 +1,434 @@
+﻿@{
+    ViewData["Title"] = "Past 2 years demand data";
+    var rawMaterials = Model as List<Mrp2.Models.RawMaterial>;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .forecast-image {
+            
+            margin-bottom: 20px;
+        }
+
+            .forecast-image img {
+                width: 200px;
+                 
+                height: 70px; /* Set a maximum height for consistent image size */
+            }
+
+            .forecast-image .form-control {
+                margin-top: 10px;
+            }
+    </style>
+</head>
+<body>
+    <div class="row ms-3  ">
+        <h1>@ViewData["Title"]</h1>
+        <div class="row col-md-12">
+            <div  ">
+                <form>
+                    <div id="forecastingFields" class="row">
+                        @for (int i = 1; i <= 24; i++)
+                        {
+                            string label = i <= 12 ? System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i) : System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i - 12);
+                            <div class="col-md-1 mb-1">
+                                <label for="month-@i" class="form-label">@label</label>
+                                <input type="number" class="form-control" id="month-@i" name="month-@i" />
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mb-3 col-5">
+                        <label for="rawMaterialDropdown" class="form-label">Select Raw Material</label>
+                        <select class="form-select" style="background:lightgrey"  id="rawMaterialDropdown" onchange="fetchLeadTime()">
+                            <option value="">-- Select Raw Material --</option>
+
+            @foreach (var rawMaterial in rawMaterials)
+            {
+                                <option value="@rawMaterial.Id">@rawMaterial.Id - @rawMaterial.Name</option>
+            }
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="generateExample()">Generate Example</button>
+                    <button type="button" class="btn btn-primary ms-4" onclick="updateEOQROP()">Update EOQ-ROP-S.Stock</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <hr>
+
+    <div class="row mt-2 col-12" style="margin-left:30px">
+
+        <div class="col-md-3 forecast-image">
+
+            <img src="/images/eoq.jpg.png" alt="Economic Order Quantity" style="width:300px"  />
+            <div>Economic Order Quantity</div>
+            <input type="text" class="form-control mt-2" id="eoq-input" style="background:lime" />
+        </div>
+
+        <div class="col-md-4 forecast-image">
+            <img src="/images/reorderpoint.jpg.png" alt="Reorder Point" style="width:350px " />
+            <div>Reorder Point in daily Demand & daily Leadtime</div>
+            <input type="text" class="form-control mt-2" id="reorder-point-input" style="background:lime" />
+        </div>
+
+        <div class="col-md-4 forecast-image">
+            <img src="/images/safetystock.jpg.png" style="width:350px" alt=" Safety Stock " />
+            <div>Safety Stock in Monthly Lead Time & stDev Monthly D </div>
+            <input type="text" class="form-control mt-2" id="safety-stock-input" style="background:lime" />
+        </div>
+
+    </div>
+
+  
+
+    <hr>
+
+    <div class="row mt-2 col-12" style="margin-left:30px">
+        <div class="col-md-3">
+            <label for="lead-time-days">Average Lead Time (days)</label>
+            <input type="number" class="form-control"id="lead-time-days" onchange="calculateLeadTimeInMonths()" />
+        </div>
+        <div class="col-md-3">
+            <label for="lead-time-months">Average Lead Time (months)</label>
+            <input type="number" class="form-control" id="lead-time-months" />
+        </div>
+
+
+
+        <div class="col-md-3">
+            <label for="expected-service-level">Expected Service Level</label>
+           @*  <input type="number" class="form-control" id="expected-service-level" /> *@
+            <select class="form-control" id="expected-service-level">
+                <option value="1.04">85% - 1.04</option>
+                <option value="1.08">86% - 1.08</option>
+                <option value="1.13">87% - 1.13</option>
+                <option value="1.17">88% - 1.17</option>
+                <option value="1.23">89% - 1.23</option>
+                <option value="1.28">90% - 1.28</option>
+                <option value="1.34">91% - 1.34</option>
+                <option value="1.41">92% - 1.41</option>
+                <option value="1.48">93% - 1.48</option>
+                <option value="1.55">94% - 1.55</option>
+                <option value="1.64">95% - 1.64</option>
+                <option value="1.75">96% - 1.75</option>
+                <option value="1.88">97% - 1.88</option>
+                <option value="2.05">98% - 2.05</option>
+                <option value="2.33">99% - 2.33</option>
+                <option value="2.58">99.50% - 2.58</option>
+                <option value="2.65">99.60% - 2.65</option>
+                <option value="2.75">99.70% - 2.75</option>
+                <option value="2.88">99.80% - 2.88</option>
+                <option value="3.09">99.90% - 3.09</option>
+                <option value="3.72">99.99% - 3.72</option>
+            </select>
+
+
+        </div>
+       
+
+
+
+      
+        <div class="col-md-3">
+            <label for="yearly-demand">Yearly Demand</label>
+            <input type="number" class="form-control" id="yearly-demand" />
+        </div>
+
+        <div class="col-md-3">
+            <label for="average-monthly-demand">Average Monthly Demand</label>
+            <input type="number" class="form-control" id="average-monthly-demand" />
+        </div>
+        <div class="col-md-3">
+            <label for="average-daily-demand">Average Daily Demand</label>
+            <input type="number" class="form-control" id="average-daily-demand" />
+        </div>
+        <div class="col-md-3">
+            <label for="std-deviation-monthly-demand">Standard Deviation of Monthly Demand</label>
+            <input type="number" class="form-control" id="std-deviation-monthly-demand" />
+        </div>
+
+
+        <hr class="mt-2">
+
+
+        <div class="row mt-2 col-10" style="margin-left:00px">
+        <div class="col-2">
+            <label for="standard-cost">Standard Cost*</label>
+            <input type="number" class="form-control"    id="standard-cost" />
+        </div>
+
+
+       
+            <div class="col-md-3">
+                <label for="holding-cost-percentage">Holding Cost of Inventory (%)</label>
+                <input type="number"  class="form-control" id="holding-cost-percentage" />
+            </div>
+
+            <div class="row mt-2 col-12"  >
+            <div class="col-2">
+                <label for="warehousing-cost">Warehousing Costs*</label>
+                <input type="number" class="form-control" id="warehousing-cost" />
+            </div>
+            <div class="col-2">
+                <label for="insurance-cost">Insurance Costs*</label>
+                <input type="number" class="form-control" id="insurance-cost" />
+            </div>
+            <div class="col-2">
+                <label for="handling-cost">Handling Costs*</label>
+                <input type="number" class="form-control" id="handling-cost" />
+            </div>
+            <div class="col-2">
+                <label for="cost-of-capital">Cost of Capital*</label>
+                <input type="number" class="form-control" id="cost-of-capital" />
+            </div>
+            <div class="col-2">
+                <label for="overheads-cost">Overheads*</label>
+                <input type="number" class="form-control" id="overheads-cost" />
+            </div>
+                <div class="col-2">
+                    <label for="inventory-value">Inv/ry Total Value*</label>
+                    <input type="number" class="form-control" id="inventory-value" />
+                </div>
+
+        </div>
+        </div>
+        <hr class="mt-2"></hr>
+        <div class="row mt-2 col-12" style="margin-left:00px">
+            <div class="col-2" >
+                <label for="ordering-cost">Ordering Cost</label>
+                <input type="number"  class="form-control" id="ordering-cost" />
+            </div>
+        </div>
+            <div class="row mt-2 col-10" style="margin-left:5px">
+
+
+            <div class="col-2">
+                <label for="procurement-wages">Procurement Wages*</label>
+                <input type="number" class="form-control" id="procurement-wages" />
+            </div>
+            <div class="col-2">
+                <label for="ordering-overheads">Ordering Overheads*</label>
+                <input type="number" class="form-control" id="ordering-overheads" />
+            </div>
+           
+            <div class="col-5 ">
+                <label for="cost-per-order">Cost per Order (Shipping and Transaction Fees)*</label>
+                <input type="number" class="form-control" id="cost-per-order" />
+            </div>
+            <div class="col-3">
+                <label for="orders-per-month">Number of Orders per Month*</label>
+                <input type="number" class="form-control" id="orders-per-month" />
+            </div>
+        </div>
+
+        <button class="btn btn-success col-3 mt-3 ms-4" type="button" onclick="calculateHoldingCost()">Calculate</button>
+        <a class=" btn btn-success  col-3 mt-3 ms-4" style="margin-left:45px" href="/home/landingpage">home</a>
+
+
+        <hr class="mt-2"></hr>
+
+        <div class="mt-2">
+           <h4> Safety Stock Calculation with Monthly Demand and Monthly Lead Time</h4>
+            Higher-Level View: Monthly data provides a broader view of demand patterns, smoothing out daily fluctuations and giving a clearer picture of overall demand variability.
+            Reduced Noise: Monthly demand and lead time averages help in reducing the noise and irregularities that are more pronounced in daily data, leading to a more stable safety stock calculation.
+                Strategic Planning: Safety stock is typically a buffer against long-term variability, and using monthly data helps in strategic planning rather than responding to short-term fluctuations.
+            <h4>            Reorder Point Calculation with Daily Demand and Daily Lead Time</h4>
+            Granularity: The reorder point is about timing the orders precisely to ensure stock availability. Daily data provides the granularity needed for accurate and timely ordering.
+            Timely Responses: Using daily demand and lead time ensures that the reorder point is sensitive to short-term changes and can trigger orders promptly when inventory levels fall below the threshold.
+            Operational Efficiency: The reorder point is an operational tool used to manage day-to-day inventory levels, and daily data helps in maintaining operational efficiency by aligning orders closely with daily consumption patterns.
+        </div>
+
+        <hr class="mt-2"></hr>
+    </div>
+    
+    <script>
+
+        function calculateHoldingCost() {
+
+            // Get values from input fields
+            let warehousingCost = parseFloat(document.getElementById('warehousing-cost').value) || 0;
+            let insuranceCost = parseFloat(document.getElementById('insurance-cost').value) || 0;
+            let handlingCost = parseFloat(document.getElementById('handling-cost').value) || 0;
+            let costOfCapital = parseFloat(document.getElementById('cost-of-capital').value) || 0;
+            let overheadsCost1 = parseFloat(document.getElementById('overheads-cost').value) || 0;
+            let inventoryValue = parseFloat(document.getElementById('inventory-value').value) || 1; // Avoid division by zero
+
+          
+
+
+
+            // Calculate total cost
+            let totalCost = warehousingCost + insuranceCost + handlingCost + costOfCapital + overheadsCost1  ;
+
+            // Calculate holding cost percentage
+            let holdingCostPercentage = (totalCost / inventoryValue) ;
+
+            // Update holding cost input
+            document.getElementById('holding-cost-percentage').value = holdingCostPercentage.toFixed(3);
+
+            // Calculate ordering cost
+            let procurementWages = parseFloat(document.getElementById('procurement-wages').value) || 0;
+            let orderingOverheads = parseFloat(document.getElementById('ordering-overheads').value) || 0;
+            let costPerOrder = parseFloat(document.getElementById('cost-per-order').value) || 0;
+            let ordersPerMonth = parseFloat(document.getElementById('orders-per-month').value) || 1; // Avoid division by zero
+
+            let totalOrderingCost = procurementWages + orderingOverheads + costPerOrder;
+            let orderingCost = totalOrderingCost / ordersPerMonth;
+
+            document.getElementById('ordering-cost').value = orderingCost.toFixed(3);
+
+
+            const standardCost = parseFloat(document.getElementById('standard-cost').value);
+            const holdingCostPercentage1 = parseFloat(document.getElementById('holding-cost-percentage').value);
+            const yearlyDemand = parseFloat(document.getElementById('yearly-demand').value);
+            const orderingCost1 = parseFloat(document.getElementById('ordering-cost').value);
+
+            const holdingCost = (holdingCostPercentage) * standardCost;
+
+            const eoq = Math.sqrt((2 * yearlyDemand * orderingCost1) / holdingCost);
+
+            document.getElementById('eoq-input').value = eoq.toFixed(3);
+
+             
+        }
+    </script>
+    
+    <script>
+        function fetchLeadTime() {
+            const rawMaterialId = document.getElementById('rawMaterialDropdown').value;
+            if (!rawMaterialId) {
+                document.getElementById('lead-time-days').value = '';
+                return;
+            }
+
+            fetch(`/Inventory/GetLeadTime?rawMaterialId=${rawMaterialId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.leadTime !== undefined) {
+                        document.getElementById('lead-time-days').value = data.leadTime;
+                        calculateLeadTimeInMonths();
+                    } else {
+                        document.getElementById('lead-time-days').value = '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching lead time:', error);
+                    document.getElementById('lead-time-days').value = '';
+                });
+        }
+    </script>
+
+
+
+    <script>
+        function generateExample() {
+            const min = 500;
+            const max = 2000;
+            const step = 100;
+            let yearlyDemand = 0;
+            let monthlyDemands = [];
+
+            for (let i = 1; i <= 24; i++) {
+                const randomValue = Math.floor(Math.random() * ((max - min) / step + 1)) * step + min;
+                document.getElementById(`month-${i}`).value = randomValue;
+                yearlyDemand += randomValue;
+                monthlyDemands.push(randomValue);
+            }
+            document.getElementById('yearly-demand').value = yearlyDemand;
+
+            const averageMonthlyDemand = yearlyDemand / 24;
+            document.getElementById('average-monthly-demand').value = averageMonthlyDemand.toFixed(3);
+
+
+            const averageDailyDemand = averageMonthlyDemand / 25;
+            document.getElementById('average-daily-demand').value = averageDailyDemand.toFixed(3);
+
+            // Calculate standard deviation
+            const variance = monthlyDemands.reduce((total, num) => total + Math.pow(num - averageMonthlyDemand, 2), 0) / 24;
+            const stdDeviation = Math.sqrt(variance);
+            document.getElementById('std-deviation-monthly-demand').value = stdDeviation.toFixed(3);
+
+            // Calculate safety stock
+            const serviceLevelFactor = parseFloat(document.getElementById('expected-service-level').value);
+            const averageLeadTimeMonths = parseFloat(document.getElementById('lead-time-months').value);
+            const safetyStock = stdDeviation * serviceLevelFactor * Math.sqrt(averageLeadTimeMonths);
+            document.getElementById('safety-stock-input').value = safetyStock.toFixed(3);
+
+
+            // Calculate reorder point
+            const averageLeadTimeDays = parseFloat(document.getElementById('lead-time-days').value);
+            const reorderPoint = (averageDailyDemand * averageLeadTimeDays) + safetyStock;
+            document.getElementById('reorder-point-input').value = reorderPoint.toFixed(3);
+
+
+
+        }
+    </script>
+
+
+    <script>
+    function calculateLeadTimeInMonths() {
+    const leadTimeDays = document.getElementById('lead-time-days').value;
+    const leadTimeMonths = leadTimeDays / 25;
+    document.getElementById('lead-time-months').value = leadTimeMonths.toFixed(3);
+    }
+    </script>
+
+    <script>
+    function updateEOQROP() {
+    const rawMaterialId = document.getElementById('rawMaterialDropdown').value;
+    const eoq = parseFloat(document.getElementById('eoq-input').value) || 0;
+    const safetyStock = parseFloat(document.getElementById('safety-stock-input').value) || 0;
+    const reorderPoint = parseFloat(document.getElementById('reorder-point-input').value) || 0;
+
+    if (!rawMaterialId) {
+    alert('Please select a raw material.');
+    return;
+    }
+
+    if (!confirm('Are you sure you want to update EOQ, ROP, and Safety Stock?')) {
+    return;
+    }
+
+   
+
+    // Send update request to server
+    fetch(`/Inventory/UpdateEOQROP?rawMaterialId=${rawMaterialId}&eoq=${eoq}&reorderPoint=${reorderPoint}&safetyStock=${safetyStock}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+    if (!response.ok) {
+    throw new Error('Network response was not ok');
+    }
+    alert('EOQ, ROP, and Safety Stock updated successfully.');
+    // Optionally, you can reload the page or update UI as needed
+    })
+    .catch(error => {
+    console.error('Error updating EOQ, ROP, and Safety Stock:', error);
+    alert('Error updating EOQ, ROP, and Safety Stock. Please try again.');
+    });
+    }
+
+
+    </script>
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

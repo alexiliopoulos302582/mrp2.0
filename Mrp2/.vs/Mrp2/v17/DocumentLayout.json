@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\alexi\\source\\repos\\Mrp2\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4C62D7B8-132D-4616-A81B-4E6F4F0EE207}|Mrp2.csproj|c:\\users\\alexi\\source\\repos\\mrp2\\views\\kpis\\kpis.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4C62D7B8-132D-4616-A81B-4E6F4F0EE207}|Mrp2.csproj|solutionrelative:views\\kpis\\kpis.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 203,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Kpis.cshtml",
+              "DocumentMoniker": "C:\\Users\\alexi\\source\\repos\\Mrp2\\Views\\Kpis\\Kpis.cshtml",
+              "RelativeDocumentMoniker": "Views\\Kpis\\Kpis.cshtml",
+              "ToolTip": "C:\\Users\\alexi\\source\\repos\\Mrp2\\Views\\Kpis\\Kpis.cshtml",
+              "RelativeToolTip": "Views\\Kpis\\Kpis.cshtml",
+              "ViewState": "AQIAAHgAAAAAAAAAAAAAAIsAAAAjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-07-28T06:48:30.199Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

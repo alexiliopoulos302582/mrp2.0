@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Mrp2.props" />
+</Project>
